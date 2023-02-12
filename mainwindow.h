@@ -17,5 +17,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString get_calc_label();
+    void set_calc_label(QString new_label);
+    void set_btn_dot_enabled(bool status);
+    void on_btn_numbers_clicked(QString number);
+    void on_btn_clear_clicked();
+    void on_btn_dot_clicked();
+    void on_btn_del_clicked();
 };
 #endif // MAINWINDOW_H
