@@ -24,5 +24,6 @@
 #### Автор
 **Гришанов Климентий** *СГН3-23Б МГТУ им. Баумана*. 
 
-Member of **bSix**
+Member of **bSix**. 
+
 **[Telegram](https://t.me/busyleap)**
