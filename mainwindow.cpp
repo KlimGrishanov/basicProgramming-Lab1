@@ -20,10 +20,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btn_nine, &QPushButton::clicked, this, [this]{MainWindow::on_btn_numbers_clicked("9");});
     connect(ui->btn_zero, &QPushButton::clicked, this, [this]{MainWindow::on_btn_numbers_clicked("0");});
 
-    connect(ui->btn_clear, &QPushButton::clicked, this, &MainWindow::on_btn_clear_clicked);
-    connect(ui->btn_dot, &QPushButton::clicked, this, &MainWindow::on_btn_dot_clicked);
-    connect(ui->btn_del, &QPushButton::clicked, this, &MainWindow::on_btn_del_clicked);
-    connect(ui->btn_change_sign, &QPushButton::clicked, this, &MainWindow::on_btn_change_sign_clicked);
+//    connect(ui->btn_clear, &QPushButton::clicked, this, &MainWindow::on_btn_clear_clicked);
+//    connect(ui->btn_dot, &QPushButton::clicked, this, &MainWindow::on_btn_dot_clicked);
+//    connect(ui->btn_del, &QPushButton::clicked, this, &MainWindow::on_btn_del_clicked);
+//    connect(ui->btn_change_sign, &QPushButton::clicked, this, &MainWindow::on_btn_change_sign_clicked);
 
     connect(ui->btn_plus, &QPushButton::clicked, this, [this]{MainWindow::on_btn_sign_clicked(PLUS);});
     connect(ui->btn_minus, &QPushButton::clicked, this, [this]{MainWindow::on_btn_sign_clicked(MINUS);});
@@ -49,16 +49,16 @@ void MainWindow::set_calc_label (QString new_label) {
 
 // Validate values, catch error
 QString MainWindow::validation_label (QString str) {
-    if (str == "inf") {
+    if (str == "inf" || str == "-inf") {
         str = "0";
-        QMessageBox::critical(this, "Error Message", "Stop ignore math:\nDivide by zero");
+        QMessageBox::critical(this, "Error Message", "Stop ignore math:\nDivide by zero"); // except this
     } else if (str == "nan") {
         str = "0";
     }
     return str;
 }
 
-// Launch post action by sign
+// Launch post action by sign (another lib)
 void MainWindow::action_in_calc_memory (double number) {
     if (last_action == PLUS) {
         calc_memory = calc_memory + number;
@@ -71,7 +71,7 @@ void MainWindow::action_in_calc_memory (double number) {
     }
 }
 
-// Set base css stylesheet for sign buttons
+// Set base css stylesheet for sign buttons (another lib)
 void MainWindow::set_css_btn_sign_base () {
     if (last_action == PLUS) {
         ui -> btn_plus -> setStyleSheet(css_default_sign_btn);
@@ -89,7 +89,7 @@ void MainWindow::set_css_btn_sign_base () {
     }
 }
 
-// Set clicked css stylesheet for sign buttons
+// Set clicked css stylesheet for sign buttons (another lib)
 void MainWindow::set_css_btn_sign_clicked (int sign) {
     if (sign == PLUS) {
         ui->btn_plus->setStyleSheet(css_clicked_sign_btn);
@@ -104,7 +104,7 @@ void MainWindow::set_css_btn_sign_clicked (int sign) {
     }
 }
 
-// Set css stylesheet for dot buttons by status
+// Set css stylesheet for dot buttons by status (another lib)
 void MainWindow::set_css_btn_dot_enabled (bool status) {
     ui->btn_dot->setEnabled(status);
     if (status) {
@@ -118,11 +118,8 @@ void MainWindow::set_css_btn_dot_enabled (bool status) {
 void MainWindow::on_btn_numbers_clicked (QString number) {
     QString label = get_calc_label();
 
-    if (number == "0" && label == "0") {
+    if ((number == "0" && label == "0") || (isResult && label.contains("e"))) { // !except in else
         // except
-    } else if (isResult) {
-        set_calc_label(number);
-        isResult = false;
     } else if (label == "0") {
         set_calc_label(number);
     } else if (label.length() < STR_LENGTH) {
@@ -143,16 +140,12 @@ void MainWindow::on_btn_clear_clicked () {
 // SLOT for clicked dot (.) button
 void MainWindow::on_btn_dot_clicked () {
     QString new_label = get_calc_label();
-
-    if (isResult) {
-        set_calc_label("0.");
-        isResult = false;
-    } else if (new_label.length() == 0) {
+    if (new_label.length() == 0) {
         set_calc_label("0.");
     } else if (new_label.length() < STR_LENGTH) {
         new_label = new_label + ".";
         set_calc_label(new_label);
-        set_css_btn_dot_enabled(0);
+        set_css_btn_dot_enabled(0); // !change if/else
     } else {
         //except
     }
@@ -161,13 +154,15 @@ void MainWindow::on_btn_dot_clicked () {
 // SLOT for clicked del button
 void MainWindow::on_btn_del_clicked () {
     QString new_label = get_calc_label();
-    if (isResult) {
-        set_calc_label("0");
+
+    if(new_label.contains("e")){ // !change if/else
+        // except
+    } else if(!new_label.contains(".") ){
         set_css_btn_dot_enabled(1);
-    } else {
         new_label.remove(-1, 1);
-        set_calc_label(new_label);
     }
+
+    set_calc_label(new_label);
 }
 
 // SLOT for clicked sign buttons
@@ -180,7 +175,7 @@ void MainWindow::on_btn_sign_clicked (int sign) {
 
     if (last_action == sign && label != "") {
         action_in_calc_memory(number);
-    } else if (last_action == sign && label == ""){
+    } else if (last_action == sign && label == ""){ // !change if/else
         // except
     } else if (label == "" && last_action != EMPTY) {
         set_css_btn_sign_base();

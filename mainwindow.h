@@ -6,7 +6,7 @@
 // Define const vars for Lab
 #define STR_LENGTH 30
 #define EMPTY 0
-#define PRECISION 7
+#define PRECISION 12
 
 // Define const int for sign (like-enum)
 #define PLUS 1
@@ -46,25 +46,22 @@ private:
     // Validation, catch errors
     QString validation_label(QString str);
 
-    // Set CSS stylesheets
+    // Set CSS stylesheets (another file)
     void set_css_btn_sign_base();
     void set_css_btn_sign_clicked(int sign);
     void set_css_btn_dot_enabled(bool status);
 
     // Math function
     void action_in_calc_memory(double number);
-
+//private slots:
     // SLOTS for clicked buttons (SIGNAL)
+private slots:
     void on_btn_sign_clicked(int sign);
     void on_btn_change_sign_clicked();
     void on_btn_numbers_clicked(QString number);
     void on_btn_clear_clicked();
     void on_btn_dot_clicked();
     void on_btn_del_clicked();
-    void on_btn_multiply_clicked();
-    void on_btn_plus_clicked();
-    void on_btn_divide_clicked();
-    void on_btn_minus_clicked();
     void on_btn_equls_clicked();
 };
 #endif // MAINWINDOW_H
