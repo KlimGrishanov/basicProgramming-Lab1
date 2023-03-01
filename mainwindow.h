@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "cssWork.h"
 
 // Define const vars for Lab
 #define STR_LENGTH 30
@@ -31,11 +32,6 @@ private:
     // Calc memory
     double calc_memory = EMPTY;
     int last_action = EMPTY;
-    bool isResult = false;
-
-    // CSS Stylesheets
-    QString css_default_sign_btn = "QPushButton {background: #DF6521;border-radius: 10px;color: #FFFFFF;font-weight: 600;}QPushButton:hover {background-color: #FF7223;}";
-    QString css_clicked_sign_btn = "QPushButton {background: #808080; border-radius: 10px;color: #FFFFFF;font-weight: 600;}";
 
     Ui::MainWindow *ui;
 
@@ -45,17 +41,14 @@ private:
 
     // Validation, catch errors
     QString validation_label(QString str);
+    void error_handling (QString str);
 
-    // Set CSS stylesheets (another file)
-    void set_css_btn_sign_base();
-    void set_css_btn_sign_clicked(int sign);
-    void set_css_btn_dot_enabled(bool status);
+    // Set CSS stylesheets
+    void set_default_sign_css();
+    void set_clicked_sign_css(int sign);
 
-    // Math function
-    void action_in_calc_memory(double number);
-//private slots:
-    // SLOTS for clicked buttons (SIGNAL)
 private slots:
+    // SLOTS for clicked buttons (SIGNAL)
     void on_btn_sign_clicked(int sign);
     void on_btn_change_sign_clicked();
     void on_btn_numbers_clicked(QString number);
