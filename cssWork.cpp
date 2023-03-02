@@ -14,7 +14,10 @@ void set_css_btn_sign_clicked(QPushButton *btn_sign) {
 void set_css_btn_dot_enabled (bool status, QPushButton *btn_dot) {
     btn_dot->setEnabled(status);
     if (status) {
-        btn_dot->setStyleSheet("QPushButton{ background: #2C2C2C; border-radius: 10px;color: white;} QPushButton:hover{background: #5C5C5C;}");
+        btn_dot->setStyleSheet("QPushButton{ "
+                               "background: #2C2C2C; border-radius: 10px;color: white;"
+                               "} QPushButton:hover{"
+                               "background: #5C5C5C;}");
     } else {
         btn_dot->setStyleSheet("color: black; background-color: #2C2C2C; border-radius: 10px;");
     }

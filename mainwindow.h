@@ -3,18 +3,11 @@
 
 #include <QMainWindow>
 #include "cssWork.h"
+#include "bussinessLogic.h"
 
 // Define const vars for Lab
 #define STR_LENGTH 30
-#define EMPTY 0
 #define PRECISION 12
-
-// Define const int for sign (like-enum)
-#define PLUS 1
-#define MINUS 2
-#define MULTIPLY 3
-#define DIVIDE 4
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -42,6 +35,7 @@ private:
     // Validation, catch errors
     QString validation_label(QString str);
     void error_handling (QString str);
+    void validation_calc(action_obj temp);
 
     // Set CSS stylesheets
     void set_default_sign_css();

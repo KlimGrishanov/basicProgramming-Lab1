@@ -4,6 +4,8 @@
 #include "bussinessLogic.h"
 #include <QMessageBox>
 #include <string>
+#include <iostream>
+#include "bussinessLogic.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,17 +54,14 @@ void MainWindow::set_calc_label (QString new_label) {
 
 // Validate values, catch error
 QString MainWindow::validation_label (QString str) {
-    if (str == "inf" || str == "-inf") {
-        str = "0";
-        QMessageBox::critical(this, "Error Message", "Stop ignore math:\nDivide by zero"); // except this
-    } else if (str == "nan") {
+    if (str == "nan" || str == "inf" || str == "-inf") {
         str = "0";
     }
     return str;
 }
 
 void MainWindow::error_handling (QString str) {
-    if (str.contains("e")) {
+    if (str.contains('e')) {
         QMessageBox::critical(this, "Error Message", "You cant add numbers for e. Push AC or use sign buttons");
     } else if (str.length() == STR_LENGTH){
         QMessageBox::critical(this, "Error Message", "Limit quantity of numbers");
@@ -104,9 +103,11 @@ void MainWindow::set_clicked_sign_css (int sign) {
 void MainWindow::on_btn_numbers_clicked (QString number) {
     QString label = get_calc_label();
 
-    if ((number != "0" || label != "0") && !label.contains("e")) {
+    if ((number != "0" || label != "0" || label != "-0") && !label.contains("e")) {
         if(label == "0") {
             set_calc_label(number);
+        } else if (label == "-0") {
+            set_calc_label("-" + number);
         } else if (label.length() < STR_LENGTH) {
             label = label + number;
             set_calc_label(label);
@@ -122,6 +123,7 @@ void MainWindow::on_btn_numbers_clicked (QString number) {
 void MainWindow::on_btn_clear_clicked () {
     set_calc_label("0");
     last_action = EMPTY;
+    calc_memory = EMPTY;
     set_default_sign_css();
     set_css_btn_dot_enabled(1, ui->btn_dot);
 }
@@ -129,9 +131,10 @@ void MainWindow::on_btn_clear_clicked () {
 // SLOT for clicked dot (.) button
 void MainWindow::on_btn_dot_clicked () {
     QString new_label = get_calc_label();
+
     if (new_label.length() == 0) {
         set_calc_label("0.");
-    } else if (new_label.length() < STR_LENGTH && !new_label.contains("e")) {
+    } else if (new_label.length() < STR_LENGTH-1 && !new_label.contains("e")) {
         new_label = new_label + ".";
         set_calc_label(new_label);
         set_css_btn_dot_enabled(0, ui->btn_dot);
@@ -170,7 +173,7 @@ void MainWindow::on_btn_sign_clicked (int sign) {
     temp.number = number;
 
     if (last_action == sign && label != "") {
-         MainWindow::calc_memory = action_in_calc_memory(temp);
+         validation_calc(temp);
     } else if (label == "" && last_action != EMPTY && last_action != sign) {
         set_default_sign_css();
     } else if (last_action == EMPTY) {
@@ -178,11 +181,20 @@ void MainWindow::on_btn_sign_clicked (int sign) {
         calc_memory = number;
     } else {
         set_default_sign_css();
-        MainWindow::calc_memory = action_in_calc_memory(temp);
+        validation_calc(temp);
     }
 
     set_css_btn_dot_enabled(1, ui->btn_dot);
     last_action = sign;
+}
+
+void MainWindow::validation_calc(action_obj temp) {
+    double tempMemory = action_in_calc_memory(temp);
+    if(tempMemory != INFINITY) {
+        MainWindow::calc_memory = tempMemory;
+    } else {
+        QMessageBox::critical(this, "Error Message", "Stop ignore math:\nDivide by zero");
+    }
 }
 
 // SLOT for clicked equals (=) button
@@ -195,11 +207,12 @@ void MainWindow::on_btn_equls_clicked () {
     temp.sign = MainWindow::last_action;
     temp.number = number;
 
-    MainWindow::calc_memory = action_in_calc_memory(temp);
+    validation_calc(temp);
+
     QString new_label = QString().setNum(calc_memory, 'g', PRECISION);
     new_label = validation_label(new_label);
     set_default_sign_css();
-    ui->lbl_calc_line->setText(new_label);
+    set_calc_label(new_label);
 
     if (get_calc_label().contains(".")) {
         set_css_btn_dot_enabled(0, ui->btn_dot);
@@ -217,10 +230,10 @@ void MainWindow::on_btn_change_sign_clicked () {
 
     if(label.contains("-")) {
         new_label = label.remove(0, 1);
-    } else if (label != "0"){
+    } else if (label != "0" && !label.contains("-")){
         new_label = "-" + label;
     } else {
-        new_label = "-";
+        new_label = "-0";
     }
 
     set_calc_label(new_label);

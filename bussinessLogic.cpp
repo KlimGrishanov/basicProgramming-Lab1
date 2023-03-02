@@ -9,7 +9,11 @@ double action_in_calc_memory (action_obj calcObject) {
     } else if (calcObject.sign == MULTIPLY) {
         res = calcObject.memory * calcObject.number;
     } else if (calcObject.sign == DIVIDE){
-        res = calcObject.memory / calcObject.number;
+        if(calcObject.number != 0) {
+            res = calcObject.memory / calcObject.number;
+        } else {
+            res = ERROR;
+        }
     }
     return res;
 }
